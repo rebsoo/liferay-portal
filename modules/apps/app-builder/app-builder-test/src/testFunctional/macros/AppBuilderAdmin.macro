@@ -35,16 +35,6 @@ definition {
 		}
 
 		AppBuilderAdmin.continueNewCustomObject();
-
-		while (IsElementPresent(locator1 = "AppBuilder#BUTTON_CONTINUE")) {
-			Pause(locator1 = "1000");
-		}
-	}
-
-	macro addEntry {
-
-		AppBuilderAdmin.add();
-		AppBuilderAdmin.waitForSaveButtonVisible();
 	}
 
 	macro addOrRemovePermissionFromRoles {
@@ -309,8 +299,7 @@ definition {
 
 	macro save {
 		Click(locator1 = "AppBuilder#SAVE_BUTTON");
-
-		AppBuilderAdmin.waitForSaveButtonNotVisible();
+		Pause(locator1 = "2000");
 	}
 
 	macro searchByItem {
@@ -338,6 +327,8 @@ definition {
 			category = "App Builder",
 			panel = "Control Panel",
 			portlet = "Custom Objects");
+
+		Pause(locator1 = "1000");
 
 		while (IsElementPresent(locator1 = "Icon#VERTICAL_ELLIPSIS_BUTTON")) {
 			LexiconEntry.gotoVerticalEllipsisMenuItemNoError(menuItem = "Delete");
@@ -522,19 +513,6 @@ definition {
 	macro viewItem {
 		AppBuilderAdmin.openActionMenu(itemName = "${itemName}");
 		MenuItem.clickNoError(menuItem = "View");
-	}
-
-	macro waitForSaveButtonNotVisible {
-		while (IsElementPresent(locator1 = "AppBuilder#SAVE_BUTTON")) {
-			Pause(locator1 = "1000");
-		}
-		Pause(locator1 = "1000");
-	}
-
-	macro waitForSaveButtonVisible {
-		while (IsElementNotPresent(locator1 = "AppBuilder#SAVE_BUTTON")) {
-			Pause(locator1 = "1000");
-		}
 	}
 
 }
