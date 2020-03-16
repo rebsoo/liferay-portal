@@ -37,6 +37,12 @@ definition {
 		AppBuilderAdmin.continueNewCustomObject();
 	}
 
+	macro addEntry {
+
+		AppBuilderAdmin.add();
+		AppBuilderAdmin.waitForSaveButtonVisible();
+	}
+
 	macro addOrRemovePermissionFromRoles {
 		for (var roleTitle : list "${roleList}") {
 			var key_roleTitle = "${roleTitle}";
@@ -299,7 +305,8 @@ definition {
 
 	macro save {
 		Click(locator1 = "AppBuilder#SAVE_BUTTON");
-		Pause(locator1 = "2000");
+
+		AppBuilderAdmin.waitForSaveButtonNotVisible();
 	}
 
 	macro searchByItem {
@@ -513,6 +520,19 @@ definition {
 	macro viewItem {
 		AppBuilderAdmin.openActionMenu(itemName = "${itemName}");
 		MenuItem.clickNoError(menuItem = "View");
+	}
+
+	macro waitForSaveButtonNotVisible {
+		while (IsElementPresent(locator1 = "AppBuilder#SAVE_BUTTON")) {
+			Pause(locator1 = "1000");
+		}
+		Pause(locator1 = "1000");
+	}
+
+	macro waitForSaveButtonVisible {
+		while (IsElementNotPresent(locator1 = "AppBuilder#SAVE_BUTTON")) {
+			Pause(locator1 = "1000");
+		}
 	}
 
 }
