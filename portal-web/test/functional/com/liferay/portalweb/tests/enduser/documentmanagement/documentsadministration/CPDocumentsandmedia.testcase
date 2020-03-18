@@ -701,10 +701,8 @@ definition {
 
 	@description = "This ensures that the SVG file can be previewed."
 	@priority = "5"
-
 	test PreviewSVG {
 		property portal.acceptance = "true";
-
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
 		DMDocument.addCP(
