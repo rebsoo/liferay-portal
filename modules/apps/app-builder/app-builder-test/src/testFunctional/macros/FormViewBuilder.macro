@@ -187,6 +187,20 @@ definition {
 		FormViewBuilder.viewCheckboxChecked(fieldName = "${fieldName}");
 	}
 
+	macro enableCheckboxPredefined {
+		if (IsNotChecked.isNotCheckedNotVisible(locator1 = "FormViewBuilder#CHECKBOX_PREDEFINED", key_fieldName = "${fieldName}")) {
+			Click(
+				key_fieldName = "${fieldName}",
+				locator1 = "FormViewBuilder#CHECKBOX_PREDEFINED_LIST");
+		}
+
+		FormViewBuilder.viewCheckboxChecked(fieldName = "${fieldName}");
+
+		Pause(
+			itemName = "${formViewName}",
+			locator1 = "1000");
+	}
+
 	macro fieldEllipsisAction {
 		Click(
 			locator1 = "FormViewBuilder#FIELD_LABEL",
@@ -213,24 +227,6 @@ definition {
 		Click(
 			key_selectAction = "Delete from Object",
 			locator1 = "FormViewBuilder#FIELD_ELLIPSIS_ACTION");
-	}
-
-	macro openFormView {
-		AppBuilderAdmin.openItem(itemName = "${formViewName}");
-	}
-
-	macro enableCheckboxPredefined {
-		if (IsNotChecked.isNotCheckedNotVisible(locator1 = "FormViewBuilder#CHECKBOX_PREDEFINED", key_fieldName = "${fieldName}")) {
-			Click(
-				key_fieldName = "${fieldName}",
-				locator1 = "FormViewBuilder#CHECKBOX_PREDEFINED_LIST");
-		}
-
-		FormViewBuilder.viewCheckboxChecked(fieldName = "${fieldName}");
-
-		Pause(
-			itemName = "${formViewName}",
-			locator1 = "1000");
 	}
 
 	macro openFormView {
@@ -418,7 +414,7 @@ definition {
 			locator1 = "FormViewBuilder#OBJECT_FIELD_LABEL",
 			value1 = "${fieldName}");
 	}
-	
+
 	macro validatePredefinedMultipleSelection {
 		var key_fieldName = "${fieldName}";
 
