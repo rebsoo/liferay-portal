@@ -2046,6 +2046,83 @@ definition {
 			title = "Text Field - Form View Title");
 	}
 
+	@description = "LRQA-56950: Make sure the form is properly shown when opening it after removing list fields (Select from List, Single and Multiple Selection)"
+	@priority = "5"
+	test FormViewProperlyShownAfterRemovingListFields {
+
+		property portal.acceptance = "true";
+
+		AppBuilderAdmin.addCustomObject(
+			customObjectName = "My new object",
+			isCreatingFormView = "true",
+			isCreatingViaPlusIcon = "true");
+
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Text");
+		FormViewBuilder.closeSidebar();
+
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Date");
+		FormViewBuilder.closeSidebar();
+
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Numeric");
+		FormViewBuilder.closeSidebar();
+
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Select from List");
+		for (var number : list "1,2,3") {
+			FormViewBuilder.editOptionsRow(
+				optionName = "Select${number}",
+				optionValue = "Select ${number}",
+				rowNumber = "${number}");
+		}
+		FormViewBuilder.closeSidebar();
+
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Multiple Selection");
+		for (var number : list "1,2,3") {
+			FormViewBuilder.editOptionsRow(
+				optionName = "Multiple${number}",
+				optionValue = "Multiple ${number}",
+				rowNumber = "${number}");
+		}
+		FormViewBuilder.closeSidebar();
+
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Single Selection");
+		for (var number : list "1,2,3") {
+			FormViewBuilder.editOptionsRow(
+				optionName = "Task${number}",
+				optionValue = "Task ${number}",
+				rowNumber = "${number}");
+		}
+		FormViewBuilder.closeSidebar();
+
+		FormViewBuilder.setName(formViewName = "My Form View");
+
+		FormViewBuilder.save();
+
+		AppBuilderAdmin.openItem(itemName = "My Form View");
+
+		FormViewBuilder.fieldEllipsisDelete(fieldLabel = "Multiple Selection");
+		FormViewBuilder.validateDeleteUsedObjectMessage();
+		FormViewBuilder.validateUsedFormView(formViewName = "My Form View");
+		FormViewBuilder.deleteButtonInDeleteFromObject();
+
+		FormViewBuilder.validateNoFieldLabel(fieldLabel = "Multiple Selection");
+		FormViewBuilder.validateNoObjectFieldName(fieldName = "Multiple Selection");
+
+		FormViewBuilder.save();
+
+		AppBuilderAdmin.openItem(itemName = "My Form View");
+
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Text");
+		FormViewBuilder.validateObjectFieldName(fieldName = "Text");
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Date");
+		FormViewBuilder.validateObjectFieldName(fieldName = "Date");
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Numeric");
+		FormViewBuilder.validateObjectFieldName(fieldName = "Numeric");
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Select from List");
+		FormViewBuilder.validateObjectFieldName(fieldName = "Select from List");
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Single Selection");
+		FormViewBuilder.validateObjectFieldName(fieldName = "Single Selection");
+	}
+
 	@description = "Validate returns by search engine using a search term"
 	@priority = "5"
 	test FormViewSearchByTerm {
