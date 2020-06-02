@@ -33,7 +33,7 @@ export default function ({title}) {
 
 	return (
 		<Sidebar>
-			<Sidebar.Header>
+			<Sidebar.Header className={displaySettings ? 'hide-title' : ''}>
 				<Sidebar.Title title={title} />
 
 				{displaySettings ? (
