@@ -13,6 +13,7 @@
  */
 
 import ClayForm from '@clayui/form';
+import classNames from 'classnames';
 import React, {useContext, useState} from 'react';
 
 import AppContext from '../../../AppContext.es';
@@ -32,8 +33,10 @@ export default function ({title}) {
 	const displaySettings = hasFocusedCustomObjectField || hasFocusedField;
 
 	return (
-		<Sidebar>
-			<Sidebar.Header className={displaySettings ? 'hide-title' : ''}>
+		<Sidebar
+			className={classNames({['display-settings']: displaySettings})}
+		>
+			<Sidebar.Header>
 				<Sidebar.Title title={title} />
 
 				{displaySettings ? (
