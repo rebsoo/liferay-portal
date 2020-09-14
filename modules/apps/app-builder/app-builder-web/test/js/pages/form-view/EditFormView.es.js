@@ -177,22 +177,6 @@ describe('EditFormView', () => {
 		jest.useRealTimers();
 	});
 
-	xit('renders', async () => {
-		const {asFragment, debug} = render(
-			<DndProvider backend={HTML5Backend}>
-				<EditFormView />
-			</DndProvider>,
-			{
-				wrapper: AppContextProviderWrapper,
-			}
-		);
-		await act(async () => {
-			jest.runAllTimers();
-		});
-		expect(asFragment()).toMatchSnapshot();
-		debug();
-	});
-
 	it('renders', async () => {
 		const props = {
 			basePortletURL: `localhost`,
@@ -203,7 +187,35 @@ describe('EditFormView', () => {
 			dataLayoutId: 1,
 			newCustomObject: true,
 		};
-		const {debug, queryByText} = render(
+		const {asFragment} = render(
+			<AppContextProviderWrapper>
+				<div className="tools-control-group">
+					<div className="control-menu-level-1-heading" />
+				</div>
+				<DndProvider backend={HTML5Backend}>
+					<div id={props.customObjectSidebarElementId} />
+					<EditFormView {...props} />
+				</DndProvider>
+			</AppContextProviderWrapper>
+		);
+		await act(async () => {
+			jest.runAllTimers();
+		});
+
+		expect(asFragment()).toMatchSnapshot();
+	});
+
+	it('renders and saves', async () => {
+		const props = {
+			basePortletURL: `localhost`,
+			customObjectSidebarElementId: `customObject`,
+			dataDefinitionId: 1,
+			dataLayoutBuilderElementId: ``,
+			dataLayoutBuilderId: 1,
+			dataLayoutId: 1,
+			newCustomObject: true,
+		};
+		const {container, debug, queryByPlaceholderText, queryByText} = render(
 			<AppContextProviderWrapper>
 				<div className="tools-control-group">
 					<div className="control-menu-level-1-heading" />
@@ -223,6 +235,10 @@ describe('EditFormView', () => {
 		fireEvent.click(Date);
 
 		console.log(dataLayoutBuilderProps.dispatchAction.mock.calls);
+
+		const searchButton = container.querySelector('svg.lexicon-icon-search');
+
+		fireEvent.click(searchButton);
 
 		debug();
 	});
