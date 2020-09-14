@@ -195,21 +195,21 @@
 			.ddm-target {
 				&.targetOver,
 				&.target-over {
+					background: #fff;
 					border: none;
 					border-radius: unset;
-					background: #fff;
 				}
 
 				&.targetOver::after,
 				&.target-over::after {
-					width: calc(100% - 4px);
-					height: 2px;
 					border: 1px solid #0b5fff;
+					bottom: 0;
 					content: '';
+					height: 2px;
+					margin: auto;
 					position: absolute;
 					top: 0;
-					bottom: 0;
-					margin: auto;
+					width: calc(100% - 4px);
 				}
 			}
 		}
