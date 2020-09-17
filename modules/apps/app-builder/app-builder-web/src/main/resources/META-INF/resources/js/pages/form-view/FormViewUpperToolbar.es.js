@@ -16,10 +16,10 @@ import {
 	DataLayoutBuilderActions,
 	DataLayoutVisitor,
 	TranslationManager,
-	saveDataDefinition,
 } from 'data-engine-taglib';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 
+import saveDataDefinition from './saveDataDefinition.es';
 import {AppContext} from '../../AppContext.es';
 import UpperToolbar from '../../components/upper-toolbar/UpperToolbar.es';
 import {errorToast, successToast} from '../../utils/toast.es';
@@ -80,8 +80,7 @@ export default ({newCustomObject, showTranslationManager}) => {
 	const onCancel = () => {
 		if (newCustomObject) {
 			Liferay.Util.navigate(basePortletURL);
-		}
-		else {
+		} else {
 			Liferay.Util.navigate(listUrl);
 		}
 	};
@@ -139,7 +138,7 @@ export default ({newCustomObject, showTranslationManager}) => {
 			)}
 
 			<UpperToolbar.Input
-				onInput={onDataLayoutNameChange}
+				onChange={onDataLayoutNameChange}
 				onKeyDown={onKeyDown}
 				placeholder={Liferay.Language.get('untitled-form-view')}
 				value={dataLayout.name[editingLanguageId] || ''}

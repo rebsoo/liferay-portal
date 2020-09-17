@@ -251,6 +251,8 @@ describe('EditTableView', () => {
 
 		fireEvent.change(tableName, {target: {value: 'My Table View'}});
 
+		expect(tableName.value).toBe('My Table View');
+
 		const save = queryByText('save');
 
 		await act(async () => {

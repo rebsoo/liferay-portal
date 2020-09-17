@@ -14,13 +14,16 @@
 
 import {act, cleanup, fireEvent, render} from '@testing-library/react';
 import {DataLayoutBuilder, DataLayoutVisitor} from 'data-engine-taglib';
-import React from 'react';
+import React, {useState, useCallback} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {ClayModalProvider} from '@clayui/modal';
 
 import {AppContextProvider} from '../../../../src/main/resources/META-INF/resources/js/AppContext.es';
 import EditFormView from '../../../../src/main/resources/META-INF/resources/js/pages/form-view/EditFormView.es';
+import FormViewContextProvider from '../../../../src/main/resources/META-INF/resources/js/pages/form-view/FormViewContextProvider.es';
+import FormViewContext from '../../../../src/main/resources/META-INF/resources/js/pages/form-view/FormViewContext.es';
+import useSaveAsFieldset from '../../../../src/main/resources/META-INF/resources/js/pages/form-view/useSaveAsFieldset.es';
 import * as toast from '../../../../src/main/resources/META-INF/resources/js/utils/toast.es';
 import {DATA_DEFINITION_RESPONSES} from '../../constants.es';
 
@@ -222,183 +225,82 @@ describe('EditFormView', () => {
 		jest.useRealTimers();
 	});
 
+	const RenderSaveAsFieldSet = ({onClick}) => {
+		const saveAsFieldSet = useSaveAsFieldset({dataLayoutBuilder});
+		return (
+			<button
+				onClick={() => {
+					onClick();
+					saveAsFieldSet('Text');
+				}}
+			>
+				Save
+			</button>
+		);
+	};
+
+	const FormViewContextWrapper = ({
+		dispatch = jest.fn(),
+		children,
+		defaultQuery = {},
+	}) => {
+		const [query, setQuery] = useState(defaultQuery);
+
+		const defaultCallback = useCallback(
+			(action) => {
+				console.log(action);
+				dispatch(action);
+				setQuery(reducer(query, action));
+			},
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			[query, setQuery]
+		);
+
+		return (
+			<FormViewContext.Provider value={[query, defaultCallback]}>
+				{children}
+			</FormViewContext.Provider>
+		);
+	};
+
 	it('renders', async () => {
-		const {asFragment} = render(
-			<AppContextProviderWrapper>
-				<div className="tools-control-group">
-					<div className="control-menu-level-1-heading" />
-				</div>
-				<DndProvider backend={HTML5Backend}>
-					<div id={props.customObjectSidebarElementId} />
-					<EditFormView {...props} />
-				</DndProvider>
-			</AppContextProviderWrapper>
-		);
-		await act(async () => {
-			jest.runAllTimers();
-		});
-
-		expect(asFragment()).toMatchSnapshot();
-	});
-
-	it('renders as edit-form-view and make actions', async () => {
-		const {queryByPlaceholderText, container, debug, queryByText} = render(
-			<AppContextProviderWrapper>
-				<ClayModalProvider>
-					<div className="tools-control-group">
-						<div className="control-menu-level-1-heading" />
-					</div>
-					<DndProvider backend={HTML5Backend}>
-						<div id={props.customObjectSidebarElementId} />
-						<EditFormView {...props} />
-					</DndProvider>
-				</ClayModalProvider>
-			</AppContextProviderWrapper>
-		);
-		await act(async () => {
-			jest.runAllTimers();
-		});
-
-		expect(queryByText('edit-form-view')).toBeTruthy();
-
-		const fieldDate = queryByText('Date');
-
-		fireEvent.click(fieldDate);
-
-		expect(
-			dataLayoutBuilderProps.dispatchAction.mock.calls[1][0]
-		).toStrictEqual({
-			payload: {
-				fieldTypeName: 'date',
-			},
-			type: 'ADD_CUSTOM_OBJECT_FIELD',
-		});
-		expect(dataLayoutBuilderProps.dispatchAction.mock.calls.length).toBe(2);
-
-		const formName = queryByPlaceholderText('untitled-form-view');
-
-		expect(formName.value).toBe('FormView');
-
-		fireEvent.change(formName, {target: {value: 'My Form View'}});
-
-		expect(
-			dataLayoutBuilderProps.dispatchAction.mock.calls[2][0]
-		).toStrictEqual({
-			type: 'UPDATE_DATA_LAYOUT_NAME',
-			payload: {
-				name: {
-					en_US: 'My Form View',
+		fetch.mockResponseOnce(
+			JSON.stringify({
+				defaultDataLayout: {
+					defaultDataLayout: {
+						id: 1,
+					},
 				},
-			},
-		});
-
-		expect(dataLayoutBuilderProps.dispatchAction.mock.calls.length).toBe(3);
-	});
-
-	it('renders as edit-form-view and simulate field add on layout and save it', async () => {
-		const response = JSON.stringify({});
-		fetch
-			.mockResponseOnce(response)
-			.mockResponseOnce(response)
-			.mockResponseOnce(JSON.stringify({items: []}));
-
-		const {queryByPlaceholderText, container, debug, queryByText} = render(
-			<AppContextProviderWrapper>
-				<ClayModalProvider>
-					<div className="tools-control-group">
-						<div className="control-menu-level-1-heading" />
-					</div>
-					<DndProvider backend={HTML5Backend}>
-						<div id={props.customObjectSidebarElementId} />
-						<EditFormView {...props} />
-					</DndProvider>
-				</ClayModalProvider>
-			</AppContextProviderWrapper>
+			})
 		);
-		await act(async () => {
-			jest.runAllTimers();
-		});
+		const dispatchFn = jest.fn();
+		const onClick = jest.fn();
 
-		expect(queryByText('edit-form-view')).toBeTruthy();
+		const _dataLayoutBuilder = {
+			...initialState,
+			dispatch: jest.fn(),
+		};
 
-		const fieldTypeName = container.querySelector(
-			'[data-field-type-name="Text"]'
+		const {debug, queryByText} = render(
+			<FormViewContextWrapper
+				dispatch={dispatchFn}
+				defaultQuery={_dataLayoutBuilder}
+			>
+				<RenderSaveAsFieldSet onClick={onClick} />
+			</FormViewContextWrapper>
 		);
 
-		fireEvent.dblClick(fieldTypeName);
+		const button = queryByText('Save');
 
-		expect(dataLayoutBuilderProps.dispatch.mock.calls.length).toBe(1);
-		expect(dataLayoutBuilderProps.dispatch.mock.calls[0][0]).toBe(
-			'fieldAdded'
-		);
+		fireEvent.click(button);
 
-		const saveButton = queryByText('save');
+		expect(onClick.mock.calls.length).toBe(1);
+		expect(fetch.mock.calls.length).toBe(1);
 
-		expect(fetch.mock.calls.length).toBe(0);
+		console.log(dispatchFn.mock);
+		console.log(_dataLayoutBuilder.dispatch.mock);
 
-		await act(async () => {
-			fireEvent.click(saveButton);
-		});
-
-		expect(fetch.mock.calls.length).toBe(2);
-
-		const [, dataLayoutParams] = fetch.mock.calls[1];
-
-		expect(dataLayoutParams.method).toBe('POST');
-		expect(dataLayoutParams.body).toEqual(
-			JSON.stringify(initialState.dataLayout)
-		);
-
-		const deleteFromObject = container.querySelector(
-			'[title="delete-from-object"]'
-		);
-
-		await act(async () => {
-			fireEvent.click(deleteFromObject);
-		});
-
-		expect(document.querySelector('.modal')).toBeTruthy();
-	});
-
-	it('renders as new-form-view and make actions', async () => {
-		const {
-			container,
-			debug,
-			queryAllByPlaceholderText,
-			queryAllByText,
-			queryByText,
-		} = render(
-			<AppContextProviderWrapper>
-				<div className="tools-control-group">
-					<div className="control-menu-level-1-heading" />
-				</div>
-				<DndProvider backend={HTML5Backend}>
-					<div id={props.customObjectSidebarElementId} />
-					<EditFormView
-						{...props}
-						dataLayoutId={0}
-						newCustomObject={false}
-					/>
-				</DndProvider>
-			</AppContextProviderWrapper>
-		);
-		await act(async () => {
-			jest.runAllTimers();
-		});
-
-		expect(queryByText('new-form-view')).toBeTruthy();
-
-		const searchButton = container.querySelector('svg.lexicon-icon-search');
-
-		fireEvent.click(searchButton);
-
-		const [search] = queryAllByPlaceholderText('search...');
-		expect(search.value).toBe('');
-
-		fireEvent.change(search, {target: {value: 'Number'}});
-
-		expect(search.value).toBe('Number');
-
-		expect(queryAllByText('Name').length).toBe(0);
+		// expect()
+		// expect(_dataLayoutBuilder.dispatch.mock.calls.length).toBe(1);
 	});
 });

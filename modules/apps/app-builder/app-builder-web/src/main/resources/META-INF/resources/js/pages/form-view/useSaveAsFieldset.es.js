@@ -96,6 +96,8 @@ export default ({dataLayoutBuilder}) => {
 					}
 				);
 
+				dispatch('oi');
+
 				dispatch({
 					payload: {
 						dataDefinition: {

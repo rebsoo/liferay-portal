@@ -174,7 +174,7 @@ export default (callback) => {
 					],
 					header: Liferay.Language.get('delete-from-object'),
 					size: 'md',
-					status: 'warning',
+					status: 'success',
 				},
 				type: 1,
 			});

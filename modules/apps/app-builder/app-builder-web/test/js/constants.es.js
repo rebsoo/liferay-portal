@@ -137,6 +137,7 @@ const dataDefinitionField = {
 		ddmDataProviderInstanceOutput: '[]',
 		displayStyle: 'singleline',
 		fieldNamespace: '',
+		rows: '[]',
 		options: {
 			en_US: [
 				{
