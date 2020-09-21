@@ -22,19 +22,25 @@ import * as time from '../../../../src/main/resources/META-INF/resources/js/util
 import AppContextProviderWrapper from '../../AppContextProviderWrapper.es';
 import {DATA_DEFINITION_RESPONSES, RESPONSES} from '../../constants.es';
 
+const portletURL = '/edit_form_view';
+const basePortletURL = 'localhost:8080';
+
 describe('ListFormViews', () => {
 	let spyFromNow;
 	let PortletURL;
+	let navigate;
 
 	beforeEach(() => {
+		navigate = jest.fn();
 		PortletURL = {
-			createRenderURL: jest.fn(),
+			createRenderURL: jest.fn().mockReturnValue(portletURL),
 		};
 
 		window.Liferay = {
 			...window.Liferay,
 			Util: {
 				...window.Liferay.Util,
+				navigate,
 				PortletURL,
 			},
 		};
@@ -56,9 +62,7 @@ describe('ListFormViews', () => {
 			);
 
 		const {asFragment} = render(
-			<AppContextProviderWrapper
-				appContext={{basePortletURL: 'localhost'}}
-			>
+			<AppContextProviderWrapper appContext={{basePortletURL}}>
 				<ListFormViews
 					match={{
 						params: {
@@ -84,9 +88,7 @@ describe('ListFormViews', () => {
 			);
 
 		const {container, queryByText} = render(
-			<AppContextProviderWrapper
-				appContext={{basePortletURL: 'localhost'}}
-			>
+			<AppContextProviderWrapper appContext={{basePortletURL}}>
 				<ListFormViews
 					match={{
 						params: {
@@ -98,7 +100,7 @@ describe('ListFormViews', () => {
 		);
 
 		await waitForElementToBeRemoved(() =>
-			document.querySelector('span.loading-animation')
+			container.querySelector('span.loading-animation')
 		);
 
 		expect(
@@ -109,20 +111,23 @@ describe('ListFormViews', () => {
 
 		expect(queryByText('there-are-no-form-views-yet')).toBeTruthy();
 
-		const buttonNewFormView = container.querySelector(
-			'[data-title="new-form-view"]'
-		);
+		const buttonNewFormView = queryByText('new-form-view');
 
 		expect(buttonNewFormView).toBeTruthy();
 
+		fireEvent.click(buttonNewFormView);
+
+		expect(navigate.mock.calls.length).toBe(1);
+		expect(navigate.mock.calls[0][0]).toBe(portletURL);
+
 		expect(PortletURL.createRenderURL.mock.calls[0][0]).toEqual(
-			'localhost'
+			basePortletURL
 		);
 
-		expect(fetch.mock.calls.length).toEqual(2);
+		expect(fetch.mock.calls.length).toBe(2);
 	});
 
-	xit('renders with data and click on actions', async () => {
+	it('renders with data and click on actions', async () => {
 		fetch
 			.mockResponseOnce(JSON.stringify(RESPONSES.ONE_ITEM))
 			.mockResponseOnce(
@@ -131,9 +136,9 @@ describe('ListFormViews', () => {
 
 		const history = createMemoryHistory();
 
-		const {baseElement, container, debug, queryByText} = render(
+		const {baseElement, container} = render(
 			<AppContextProviderWrapper
-				appContext={{basePortletURL: 'localhost'}}
+				appContext={{basePortletURL}}
 				history={history}
 			>
 				<ListFormViews
@@ -146,8 +151,36 @@ describe('ListFormViews', () => {
 			</AppContextProviderWrapper>
 		);
 
+		expect(history.length).toBe(1);
+		expect(history.location.pathname).toBe('/');
+
 		await waitForElementToBeRemoved(() =>
-			document.querySelector('span.loading-animation')
+			container.querySelector('span.loading-animation')
 		);
+
+		expect(spyFromNow).toHaveBeenCalled();
+
+		const dropDownMenu = baseElement.querySelectorAll('.dropdown-menu');
+		const actions = dropDownMenu[1].querySelectorAll('.dropdown-item');
+
+		expect(actions.length).toBe(2);
+		expect(history.length).toBe(1);
+		expect(history.location.pathname).toBe('/');
+
+		const [edit] = actions;
+
+		fireEvent.click(edit);
+
+		expect(navigate.mock.calls.length).toBe(1);
+		expect(navigate.mock.calls[0][0]).toBe(portletURL);
+
+		const buttonNewFormViewPlus = container.querySelector(
+			'[data-title="new-form-view"]'
+		);
+
+		fireEvent.click(buttonNewFormViewPlus);
+
+		expect(navigate.mock.calls.length).toBe(2);
+		expect(navigate.mock.calls[1][0]).toBe(portletURL);
 	});
 });

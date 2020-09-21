@@ -212,3 +212,109 @@ export const DATA_DEFINITION_RESPONSES = {
 		],
 	},
 };
+
+export const dataLayoutBuilderConfig = {
+	appContext: [
+		{},
+		(action) => {
+			props.appContext[0].action = action;
+		},
+	],
+	config: {
+		allowFieldSets: true,
+		allowMultiplePages: false,
+		allowRules: false,
+		allowSuccessPage: false,
+		disabledProperties: ['predefinedValue'],
+		disabledTabs: ['Autocomplete'],
+		unimplementedProperties: [
+			'fieldNamespace',
+			'indexType',
+			'readOnly',
+			'validation',
+			'visibilityExpression',
+		],
+	},
+	context: {},
+	dataLayoutBuilderId:
+		'_com_liferay_journal_web_portlet_JournalPortlet_dataLayoutBuilder',
+	fieldTypes: [],
+	localizable: true,
+	portletNamespace: 'com_liferay_journal_web_portlet_JournalPortlet',
+};
+
+export const formViewContext = {
+	appProps: {},
+	config: {
+		allowFieldSets: false,
+		allowNestedFields: true,
+		allowRules: false,
+		disabledProperties: [],
+		disabledTabs: [],
+		multiPage: true,
+		ruleSettings: {},
+		unimplementedProperties: [],
+	},
+	dataDefinition: DATA_DEFINITION_RESPONSES.ONE_ITEM,
+	dataDefinitionId: 0,
+	dataLayout: {
+		dataLayoutPages: [],
+		dataRules: [],
+		name: {
+			en_US: 'FormView',
+		},
+		paginationMode: 'wizard',
+	},
+	dataLayoutId: 0,
+	editingDataDefinitionId: 0,
+	editingLanguageId: themeDisplay.getLanguageId(),
+	fieldSets: [],
+	fieldTypes: [
+		{
+			name: 'date',
+			label: 'Date',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'select',
+			label: 'Select from List',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'fieldset',
+			label: 'Fields Group',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'numeric',
+			label: 'Numeric',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'checkbox_multiple',
+			label: 'Multiple Selection',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'radio',
+			label: 'Single Selection',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'text',
+			label: 'Text',
+			scope: 'app-builder,forms',
+		},
+		{
+			name: 'document_library',
+			label: 'Upload',
+			scope: 'app-builder,forms',
+		},
+	],
+	focusedCustomObjectField: {},
+	focusedField: {},
+	hoveredField: {},
+	sidebarOpen: true,
+	sidebarPanelId: 'fields',
+	spritemap: `${Liferay.ThemeDisplay.getPathThemeImages()}/clay/icons.svg`,
+};

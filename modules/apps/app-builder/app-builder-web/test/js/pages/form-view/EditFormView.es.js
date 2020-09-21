@@ -22,113 +22,7 @@ import {ClayModalProvider} from '@clayui/modal';
 import {AppContextProvider} from '../../../../src/main/resources/META-INF/resources/js/AppContext.es';
 import EditFormView from '../../../../src/main/resources/META-INF/resources/js/pages/form-view/EditFormView.es';
 import * as toast from '../../../../src/main/resources/META-INF/resources/js/utils/toast.es';
-import {DATA_DEFINITION_RESPONSES} from '../../constants.es';
-
-const initialState = {
-	appProps: {},
-	config: {
-		allowFieldSets: false,
-		allowNestedFields: true,
-		allowRules: false,
-		disabledProperties: [],
-		disabledTabs: [],
-		multiPage: true,
-		ruleSettings: {},
-		unimplementedProperties: [],
-	},
-	dataDefinition: DATA_DEFINITION_RESPONSES.ONE_ITEM,
-	dataDefinitionId: 0,
-	dataLayout: {
-		dataLayoutPages: [],
-		dataRules: [],
-		name: {
-			en_US: 'FormView',
-		},
-		paginationMode: 'wizard',
-	},
-	dataLayoutId: 0,
-	editingDataDefinitionId: 0,
-	editingLanguageId: themeDisplay.getLanguageId(),
-	fieldSets: [],
-	fieldTypes: [
-		{
-			name: 'date',
-			label: 'Date',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'select',
-			label: 'Select from List',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'fieldset',
-			label: 'Fields Group',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'numeric',
-			label: 'Numeric',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'checkbox_multiple',
-			label: 'Multiple Selection',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'radio',
-			label: 'Single Selection',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'text',
-			label: 'Text',
-			scope: 'app-builder,forms',
-		},
-		{
-			name: 'document_library',
-			label: 'Upload',
-			scope: 'app-builder,forms',
-		},
-	],
-	focusedCustomObjectField: {},
-	focusedField: {},
-	hoveredField: {},
-	sidebarOpen: true,
-	sidebarPanelId: 'fields',
-	spritemap: `${Liferay.ThemeDisplay.getPathThemeImages()}/clay/icons.svg`,
-};
-
-const dataLayoutBuilderConfig = {
-	appContext: [
-		{},
-		(action) => {
-			props.appContext[0].action = action;
-		},
-	],
-	config: {
-		allowFieldSets: true,
-		allowMultiplePages: false,
-		allowRules: false,
-		allowSuccessPage: false,
-		disabledProperties: ['predefinedValue'],
-		disabledTabs: ['Autocomplete'],
-		unimplementedProperties: [
-			'fieldNamespace',
-			'indexType',
-			'readOnly',
-			'validation',
-			'visibilityExpression',
-		],
-	},
-	context: {},
-	dataLayoutBuilderId:
-		'_com_liferay_journal_web_portlet_JournalPortlet_dataLayoutBuilder',
-	fieldTypes: [],
-	localizable: true,
-	portletNamespace: 'com_liferay_journal_web_portlet_JournalPortlet',
-};
+import {dataLayoutBuilderConfig, formViewContext} from '../../constants.es';
 
 const dataLayoutBuilder = new DataLayoutBuilder.default(
 	dataLayoutBuilderConfig
@@ -171,7 +65,7 @@ describe('EditFormView', () => {
 				];
 			},
 			getState: () => {
-				return initialState;
+				return formViewContext;
 			},
 			getStore: () => {
 				return {
@@ -346,7 +240,7 @@ describe('EditFormView', () => {
 
 		expect(dataLayoutParams.method).toBe('POST');
 		expect(dataLayoutParams.body).toEqual(
-			JSON.stringify(initialState.dataLayout)
+			JSON.stringify(formViewContext.dataLayout)
 		);
 
 		const deleteFromObject = container.querySelector(
