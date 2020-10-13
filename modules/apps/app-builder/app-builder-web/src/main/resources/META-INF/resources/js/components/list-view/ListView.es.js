@@ -12,18 +12,18 @@
  * details.
  */
 
-import React, {useCallback, useContext, useEffect} from 'react';
-import {withRouter} from 'react-router-dom';
+import React, { useCallback, useContext, useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 
-import {AppContext} from '../../AppContext.es';
+import { AppContext } from '../../AppContext.es';
 import useQuery from '../../hooks/useQuery.es';
 import useResource from '../../hooks/useResource.es';
-import {errorToast} from '../../utils/toast.es';
+import { errorToast } from '../../utils/toast.es';
 import ManagementToolbar from '../management-toolbar/ManagementToolbar.es';
 import ManagementToolbarResultsBar, {
 	getSelectedFilters,
 } from '../management-toolbar/ManagementToolbarResultsBar.es';
-import SearchContext, {reducer} from '../management-toolbar/SearchContext.es';
+import SearchContext, { reducer } from '../management-toolbar/SearchContext.es';
 import TableWithPagination from '../table/TableWithPagination.es';
 
 export default withRouter(
@@ -37,18 +37,19 @@ export default withRouter(
 		endpoint,
 		filters = [],
 		history,
+		location,
+		match,
 		noActionsMessage,
 		queryParams,
 		scope,
 	}) => {
-		const {defaultDelta = 20} = useContext(AppContext);
+		const { defaultDelta = 20 } = useContext(AppContext);
 		const [query, setQuery] = useQuery(
 			history,
 			{
 				filters: {},
 				keywords: '',
-				page: 1,
-				pageSize: defaultDelta,
+				defaultDelta,
 				sort: '',
 				...queryParams,
 			},
@@ -60,11 +61,11 @@ export default withRouter(
 			[query, setQuery]
 		);
 
-		const params = {...query, ...query.filters};
+		const params = { ...query, ...query.filters };
 
 		delete params.filters;
 
-		const {error, isLoading, refetch, response} = useResource({
+		const { error, isLoading, refetch, response } = useResource({
 			endpoint,
 			params,
 		});
@@ -74,12 +75,12 @@ export default withRouter(
 		let totalPages;
 
 		if (response) {
-			({items = [], totalCount, lastPage: totalPages} = response);
+			({ items =[], totalCount, lastPage: totalPages } = response);
 		}
 
 		useEffect(() => {
 			if (totalPages && Number(query.page) > totalPages) {
-				dispatch({page: totalPages, type: 'CHANGE_PAGE'});
+				dispatch({ page: totalPages, type: 'CHANGE_PAGE' });
 			}
 		}, [dispatch, query.page, totalPages]);
 

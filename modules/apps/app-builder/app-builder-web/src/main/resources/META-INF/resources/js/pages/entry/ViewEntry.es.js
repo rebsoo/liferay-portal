@@ -12,33 +12,33 @@
  * details.
  */
 
-import {usePrevious} from 'frontend-js-react-web';
-import React, {useContext, useEffect, useState} from 'react';
+import { usePrevious } from 'frontend-js-react-web';
+import React, { useContext, useEffect, useState } from 'react';
 
-import {AppContext} from '../../AppContext.es';
+import { AppContext } from '../../AppContext.es';
 import ControlMenu from '../../components/control-menu/ControlMenu.es';
-import {Loading} from '../../components/loading/Loading.es';
+import { Loading } from '../../components/loading/Loading.es';
 import useDataLayout from '../../hooks/useDataLayout.es';
 import useQuery from '../../hooks/useQuery.es';
-import {getItem} from '../../utils/client.es';
-import {errorToast} from '../../utils/toast.es';
-import {isEqualObjects} from '../../utils/utils.es';
-import FieldPreview, {SectionRenderer} from './FieldPreview.es';
+import { getItem } from '../../utils/client.es';
+import { errorToast } from '../../utils/toast.es';
+import { isEqualObjects } from '../../utils/utils.es';
+import FieldPreview, { SectionRenderer } from './FieldPreview.es';
 import ViewEntryUpperToolbar from './ViewEntryUpperToolbar.es';
 
-const getSections = ({dataDefinitionFields = []}) => {
+const getSections = ({ dataDefinitionFields = [] }) => {
 	const sections = {};
 
 	dataDefinitionFields.forEach(
 		({
-			customProperties: {collapsible},
+			customProperties: { collapsible },
 			name,
 			nestedDataDefinitionFields,
 		}) => {
 			if (nestedDataDefinitionFields.length) {
 				sections[name] = {
 					collapsible,
-					fields: nestedDataDefinitionFields.map(({name}) => name),
+					fields: nestedDataDefinitionFields.map(({ name }) => name),
 					nestedDataDefinitionFields,
 				};
 			}
@@ -53,16 +53,16 @@ export function ViewDataLayoutPageValues({
 	dataLayoutPage,
 	dataRecordValues,
 }) {
-	const {dataLayoutRows} = dataLayoutPage;
-	const {defaultLanguageId} = dataDefinition;
+	const { dataLayoutRows } = dataLayoutPage;
+	const { defaultLanguageId } = dataDefinition;
 	const sections = getSections(dataDefinition);
 
 	return dataLayoutRows
 		.reduce(
-			(fields, {dataLayoutColumns = []}) => [
+			(fields, { dataLayoutColumns = [] }) => [
 				...fields,
 				...dataLayoutColumns.reduce(
-					(fields, {fieldNames = []}) => [...fields, ...fieldNames],
+					(fields, { fieldNames = [] }) => [...fields, ...fieldNames],
 					[]
 				),
 			],
@@ -110,26 +110,26 @@ export function ViewDataLayoutPageValues({
 export default function ViewEntry({
 	history,
 	match: {
-		params: {entryIndex},
+		params: { entryIndex },
 	},
 }) {
-	const {dataDefinitionId, dataLayoutId, dataListViewId} = useContext(
+	const { dataDefinitionId, dataLayoutId, dataListViewId } = useContext(
 		AppContext
 	);
 	const {
 		dataDefinition,
-		dataLayout: {dataLayoutPages},
+		dataLayout: { dataLayoutPages },
 		isLoading,
 	} = useDataLayout(dataLayoutId, dataDefinitionId);
 
-	const [{dataRecord, isFetching, page, totalCount}, setState] = useState({
+	const [{ dataRecord, isFetching, page, totalCount }, setState] = useState({
 		dataRecord: {},
 		isFetching: true,
 		page: 1,
 		totalCount: 0,
 	});
 
-	const {dataRecordValues = {}, id: dataRecordId} = dataRecord;
+	const { dataRecordValues = {}, id: dataRecordId } = dataRecord;
 
 	const [query] = useQuery(history, {
 		keywords: '',
@@ -147,9 +147,9 @@ export default function ViewEntry({
 		) {
 			getItem(
 				`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-records`,
-				{...query, dataListViewId, page: entryIndex, pageSize: 1}
+				{ ...query, dataListViewId, page: entryIndex, pageSize: 1 }
 			)
-				.then(({items = [], ...response}) => {
+				.then(({ items = [], ...response }) => {
 					if (items.length > 0) {
 						setState({
 							dataRecord: items.pop(),
@@ -174,6 +174,10 @@ export default function ViewEntry({
 		<div className="view-entry">
 			<ControlMenu
 				backURL="../../"
+				goBack={() => {
+					console.log('chamando go back')
+					history.goBack()
+				}}
 				title={Liferay.Language.get('details-view')}
 			/>
 

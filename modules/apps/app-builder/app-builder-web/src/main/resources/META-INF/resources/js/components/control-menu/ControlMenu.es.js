@@ -12,15 +12,17 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
+
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import React, {useContext, useEffect, useState} from 'react';
-import {createPortal} from 'react-dom';
-import {Link as InternalLink, withRouter} from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Link as InternalLink, withRouter } from 'react-router-dom';
 
-import {AppContext} from '../../AppContext.es';
+import { AppContext } from '../../AppContext.es';
 
-const BackButton = ({backURL}) => {
+const BackButton = ({ backURL, goBack }) => {
 	const [backButtonContainer, setBackButtonContainer] = useState(null);
 	const Link =
 		backURL && backURL.startsWith('http') ? ExternalLink : InternalLink;
@@ -39,23 +41,38 @@ const BackButton = ({backURL}) => {
 		return <></>;
 	}
 
+	const backAngle = () => (
+		<span className="icon-monospaced">
+			<ClayIcon symbol="angle-left" />
+		</span>
+	);
+
 	return createPortal(
 		<li className="control-menu-nav-item">
-			<Link
-				className="control-menu-icon lfr-icon-item"
-				tabIndex={1}
-				to={backURL}
-			>
-				<span className="icon-monospaced">
-					<ClayIcon symbol="angle-left" />
-				</span>
-			</Link>
+			{goBack ? (
+				<ClayButton
+					className="control-menu-icon lfr-icon-item"
+					displayType="unstyled"
+					tabIndex={1}
+					onClick={goBack}
+				>
+					<backAngle />
+				</ClayButton>
+			) : (
+					<Link
+						className="control-menu-icon lfr-icon-item"
+						tabIndex={1}
+						to={backURL}
+					>
+						<backAngle />
+					</Link>
+				)}
 		</li>,
 		backButtonContainer
 	);
 };
 
-const ExternalLink = ({children, to, ...props}) => {
+const ExternalLink = ({ children, to, ...props }) => {
 	return (
 		<a href={to} {...props}>
 			{children}
@@ -82,8 +99,8 @@ const setDocumentTitle = (title) => {
 	}
 };
 
-export const InlineControlMenu = ({backURL, title, url}) => {
-	const {appDeploymentType, controlMenuElementId} = useContext(AppContext);
+export const InlineControlMenu = ({ backURL, title, url }) => {
+	const { appDeploymentType, controlMenuElementId } = useContext(AppContext);
 
 	backURL = resolveBackURL(backURL, url);
 
@@ -137,11 +154,11 @@ export const InlineControlMenu = ({backURL, title, url}) => {
 	return controlMenuContainer ? (
 		createPortal(<ControlMenu />, controlMenuContainer)
 	) : (
-		<ControlMenu />
-	);
+			<ControlMenu />
+		);
 };
 
-export const PortalControlMenu = ({backURL, title, url}) => {
+export const PortalControlMenu = ({ backURL, goBack, title, url }) => {
 	backURL = resolveBackURL(backURL, url);
 
 	useEffect(() => {
@@ -150,7 +167,7 @@ export const PortalControlMenu = ({backURL, title, url}) => {
 		).innerHTML = title;
 	}, [title]);
 
-	return <>{backURL && <BackButton backURL={backURL} />}</>;
+	return <>{backURL || goBack && <BackButton backURL={backURL} goBack={goBack} />}</>;
 };
 
 export const ControlMenuBase = (props) => {
@@ -158,7 +175,7 @@ export const ControlMenuBase = (props) => {
 		setDocumentTitle(props.title);
 	}, [props.title]);
 
-	const {appDeploymentType} = useContext(AppContext);
+	const { appDeploymentType } = useContext(AppContext);
 
 	if (
 		appDeploymentType &&
@@ -171,6 +188,6 @@ export const ControlMenuBase = (props) => {
 	}
 };
 
-export default withRouter(({match: {url}, ...props}) => {
+export default withRouter(({ match: { url }, ...props }) => {
 	return <ControlMenuBase {...props} url={url} />;
 });

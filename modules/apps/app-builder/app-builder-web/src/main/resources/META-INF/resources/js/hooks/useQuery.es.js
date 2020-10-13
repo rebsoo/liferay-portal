@@ -46,7 +46,18 @@ export const toQueryString = (query) => {
 export default (history, defaultQuery = {}, scope = false) => {
 	const {location} = history;
 	const {pathname, search} = location;
-	const currentQuery = toQuery(search, defaultQuery, scope);
+
+	const urlQuery = new URLSearchParams(search);
+	const page = urlQuery.get('page') || 1;
+	const pageSize = urlQuery.get('pageSize') || defaultQuery.defaultDelta;
+
+	delete defaultQuery.defaultDelta;
+
+	const currentQuery = toQuery(
+		search,
+		{...defaultQuery, page, pageSize},
+		scope
+	);
 
 	return [
 		currentQuery,
