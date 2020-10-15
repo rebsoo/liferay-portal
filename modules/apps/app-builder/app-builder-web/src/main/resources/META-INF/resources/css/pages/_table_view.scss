@@ -13,7 +13,7 @@ $appBuilderTableViewTransitionTime: 0.5s;
 		}
 
 		.table-view-container {
-			max-width: 940px;;
+			max-width: 940px;
 		}
 	}
 
@@ -162,21 +162,26 @@ $appBuilderTableViewTransitionTime: 0.5s;
 
 			header {
 				left: -2px;
-				top: -28px;
+				top: -26px;
+				width: calc(100% + 4px);
 			}
 		}
 
 		header {
 			background-color: $primaryColor;
 			border: 2px solid $primaryColor;
-			border-radius: 4px 4px 0 0;
+			border-radius: 2px 2px 0 0;
 			color: $whiteColor;
+			display: flex;
+			height: 24px;
+			justify-content: space-between;
 			left: -1px;
 			line-height: 20px;
-			padding: 0 8px;
+			padding: 1px 8px 0;
 			pointer-events: all;
 			position: absolute;
-			top: -27px;
+			top: -25px;
+			width: calc(100% + 2px);
 			z-index: 50;
 
 			.btn {
