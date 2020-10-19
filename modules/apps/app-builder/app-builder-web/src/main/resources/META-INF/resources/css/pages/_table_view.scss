@@ -10,10 +10,15 @@ $appBuilderTableViewTransitionTime: 0.5s;
 
 		&--sidebar-closed {
 			margin-right: 0;
+
+			.table-view-container {
+				max-width: 1248px !important;
+			}
 		}
 
 		.table-view-container {
 			max-width: 940px;
+			transition: max-width ease 0.5s;
 
 			.table-responsive {
 				.table-cell-expand {
