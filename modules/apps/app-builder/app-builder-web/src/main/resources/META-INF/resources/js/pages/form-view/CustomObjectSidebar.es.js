@@ -71,6 +71,7 @@ const DropDown = () => {
 			active={active}
 			alignmentPosition={Align.BottomRight}
 			className="custom-object-dropdown"
+			hasLeftSymbols
 			onActiveChange={(newVal) => setActive(newVal)}
 			trigger={
 				<ClayButtonWithIcon displayType="unstyled" symbol="plus" />
