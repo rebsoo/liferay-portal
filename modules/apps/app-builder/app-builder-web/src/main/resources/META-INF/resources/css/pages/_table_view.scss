@@ -6,7 +6,7 @@ $tableViewMaskZIndex: 52;
 .table-view-mask {
 	background: $whiteColor200;
 	content: '';
-	height: calc(100% + #{$tableViewMaskBaseline});
+	height: calc(100% + #{$tableViewMaskBaseline} + 2px);
 	position: absolute;
 	top: -24px;
 	width: 1000px;
