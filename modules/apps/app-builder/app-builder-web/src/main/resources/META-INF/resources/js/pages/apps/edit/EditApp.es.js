@@ -13,22 +13,22 @@
  */
 
 import ClayLayout from '@clayui/layout';
-import React, {useEffect, useReducer, useState} from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import ControlMenu from '../../../components/control-menu/ControlMenu.es';
-import {Loading} from '../../../components/loading/Loading.es';
+import { Loading } from '../../../components/loading/Loading.es';
 import useDataDefinition from '../../../hooks/useDataDefinition.es';
-import {toQuery} from '../../../hooks/useQuery.es';
-import {getItem} from '../../../utils/client.es';
+import { toQuery } from '../../../hooks/useQuery.es';
+import { getItem } from '../../../utils/client.es';
 import EditAppBody from './EditAppBody.es';
-import EditAppContext, {UPDATE_APP, reducer} from './EditAppContext.es';
+import EditAppContext, { UPDATE_APP, reducer } from './EditAppContext.es';
 import EditAppFooter from './EditAppFooter.es';
 import EditAppHeader from './EditAppHeader.es';
 
 export default ({
-	location: {search},
+	location: { search },
 	match: {
-		params: {appId, dataDefinitionId},
+		params: { appId, dataDefinitionId },
 	},
 	scope,
 }) => {
@@ -53,7 +53,7 @@ export default ({
 		},
 	});
 
-	const {backUrl} = toQuery(search, {backUrl: '../'});
+	const { backUrl } = toQuery(search, { backUrl: '../' });
 
 	useEffect(() => {
 		if (!editingLanguageId) {
@@ -88,7 +88,7 @@ export default ({
 			<ControlMenu backURL={backUrl} title={title} />
 
 			<Loading isLoading={isLoading}>
-				<EditAppContext.Provider value={{dispatch, state}}>
+				<EditAppContext.Provider value={{ dispatch, state }}>
 					<ClayLayout.ContainerFluid className="mt-4" size="lg">
 						<div className="card card-root mb-0 shadowless-card">
 							<EditAppHeader
@@ -108,7 +108,7 @@ export default ({
 								defaultLanguageId={defaultLanguageId}
 							/>
 
-							<h4 className="card-divider"></h4>
+							<h4 className="card-divider" />
 
 							<EditAppFooter
 								currentStep={currentStep}
