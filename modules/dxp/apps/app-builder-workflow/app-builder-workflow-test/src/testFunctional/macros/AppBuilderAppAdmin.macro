@@ -160,7 +160,7 @@ definition {
 
 		AssertTextEquals(
 			locator1 = "AppBuilderAppAdmin#COLUMN_ITEM",
-			value1 = "Create Date");
+			value1 = "Created Date");
 
 		AssertTextEquals(
 			locator1 = "AppBuilderAppAdmin#COLUMN_ITEM",
@@ -198,7 +198,7 @@ definition {
 
 		AssertTextEquals(
 			locator1 = "AppBuilderAppAdmin#COLUMN_ITEM",
-			value1 = "Create Date");
+			value1 = "Created Date");
 
 		AssertTextEquals(
 			locator1 = "AppBuilderAppAdmin#COLUMN_ITEM",

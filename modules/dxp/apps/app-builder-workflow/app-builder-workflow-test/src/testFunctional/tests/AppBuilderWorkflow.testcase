@@ -595,7 +595,7 @@ definition {
 			rowNumber = "4",
 			title = "First App");
 
-		AppBuilderAdmin.chooseAppSearchFilterByOption(filterOption = "Create Date");
+		AppBuilderAdmin.chooseAppSearchFilterByOption(filterOption = "Created Date");
 
 		AppBuilderAdmin.validateListTitleAtRow(
 			rowNumber = "1",
