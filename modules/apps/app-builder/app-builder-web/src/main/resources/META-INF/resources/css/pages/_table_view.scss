@@ -109,6 +109,7 @@ $tableViewMaskZIndex: 52;
 	}
 
 	.data-layout-builder-sidebar {
+		background-color: $whiteColor;
 		z-index: $tableViewMaskZIndex + 1;
 		@media (max-width: 576px) {
 			top: 112px;
