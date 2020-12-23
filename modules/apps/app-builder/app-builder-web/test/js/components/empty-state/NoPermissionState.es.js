@@ -12,45 +12,42 @@
  * details.
  */
 
-import { act, render } from '@testing-library/react';
+import {act, render} from '@testing-library/react';
 import React from 'react';
 
 import NoPermissionState from '../../../../src/main/resources/META-INF/resources/js/components/empty-state/NoPermissionState.es';
-import { FORM_VIEW } from '../../constants.es';
-const { EDIT_FORM_VIEW_PROPS, getDataLayoutBuilderProps } = FORM_VIEW;
+import {FORM_VIEW} from '../../constants.es';
+const {EDIT_FORM_VIEW_PROPS, getDataLayoutBuilderProps} = FORM_VIEW;
 
 // const noPermission = {
-//     description: 'description',
+//     description: 'you can't ascess this yet!',
 //     title: 'title',
 // }
 
 describe('NoPermissionState', () => {
-    let dataLayoutBuilderProps;
+	let dataLayoutBuilderProps;
 
-    beforeEach(() => {
-        jest.useFakeTimers();
+	beforeEach(() => {
+		jest.useFakeTimers();
 
-        dataLayoutBuilderProps = getDataLayoutBuilderProps();
+		dataLayoutBuilderProps = getDataLayoutBuilderProps();
 
-        window.Liferay = {
-            ...window.Liferay,
-            componentReady: () =>
-                new Promise((resolve) => resolve(dataLayoutBuilderProps)),
-        };
-    });
+		window.Liferay = {
+			...window.Liferay,
+			componentReady: () =>
+				new Promise((resolve) => resolve(dataLayoutBuilderProps)),
+		};
+	});
 
-    it('renders', async () => {
-        const { asFragment, debug } = render(
-            <NoPermissionState />
+	it('renders', async () => {
+		const {asFragment, debug} = render(<NoPermissionState />);
 
-        );
+		await act(async () => {
+			jest.runAllTimers();
+		});
 
-        await act(async () => {
-            jest.runAllTimers();
-        });
+		expect(asFragment()).toMatchSnapshot();
 
-        expect(asFragment()).toMatchSnapshot();
-
-        debug();
-    });
+		debug();
+	});
 });
