@@ -176,7 +176,7 @@ const FieldCategory = ({categoryName}) => (
 		<div className="autofit-row autofit-row-center">
 			<>
 				<div className="autofit-col autofit-col-expand">
-					<h3 className="category-text">{categoryName}</h3>
+					<span className="category-text">{categoryName}</span>
 				</div>
 			</>
 		</div>

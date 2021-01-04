@@ -79,9 +79,11 @@
 				background-color: $grayColor400;
 			}
 
-			h3.category-text {
+			span.category-text {
 				color: $grayColor700;
+				font-size: 12px;
 				font-weight: 600;
+				text-transform: uppercase;
 			}
 		}
 
@@ -152,6 +154,10 @@
 				.sticker {
 					background-color: $grayColor400;
 				}
+			}
+
+			.custom-object-sidebar-header {
+				margin-bottom: 10px;
 			}
 		}
 	}
