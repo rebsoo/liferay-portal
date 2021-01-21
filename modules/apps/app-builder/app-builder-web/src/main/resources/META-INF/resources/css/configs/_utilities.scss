@@ -22,3 +22,9 @@
 	color: $grayColor600;
 	margin-left: 0.25rem;
 }
+
+.sheet {
+	&:after {
+		display: none;
+	}
+}

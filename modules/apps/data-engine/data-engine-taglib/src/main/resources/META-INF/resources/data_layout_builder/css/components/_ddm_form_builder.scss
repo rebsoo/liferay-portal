@@ -2,6 +2,10 @@
 	> .sheet {
 		margin-top: 0;
 		padding: 0;
+
+		&:after {
+			display: none;
+		}
 	}
 
 	&.ddm-form-builder {
