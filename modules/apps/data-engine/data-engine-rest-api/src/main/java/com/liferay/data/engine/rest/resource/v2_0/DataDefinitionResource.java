@@ -70,6 +70,10 @@ public interface DataDefinitionResource {
 	public DataDefinition getDataDefinition(Long dataDefinitionId)
 		throws Exception;
 
+	public DataDefinition patchDataDefinition(
+			Long dataDefinitionId, DataDefinition dataDefinition)
+		throws Exception;
+
 	public DataDefinition putDataDefinition(
 			Long dataDefinitionId, DataDefinition dataDefinition)
 		throws Exception;

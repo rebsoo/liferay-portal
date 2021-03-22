@@ -67,6 +67,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -231,6 +232,91 @@ public abstract class BaseDataDefinitionResourceImpl
 		throws Exception {
 
 		return new DataDefinition();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'PATCH' 'http://localhost:8080/o/data-engine/v2.0/data-definitions/{dataDefinitionId}' -d $'{"availableLanguageIds": ___, "contentType": ___, "dataDefinitionFields": ___, "dataDefinitionKey": ___, "dataRules": ___, "dateCreated": ___, "dateModified": ___, "defaultDataLayout": ___, "defaultLanguageId": ___, "description": ___, "id": ___, "name": ___, "siteId": ___, "storageType": ___, "userId": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
+	@Consumes({"application/json", "application/xml"})
+	@Override
+	@Parameters(
+		value = {@Parameter(in = ParameterIn.PATH, name = "dataDefinitionId")}
+	)
+	@PATCH
+	@Path("/data-definitions/{dataDefinitionId}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "DataDefinition")})
+	public DataDefinition patchDataDefinition(
+			@NotNull @Parameter(hidden = true) @PathParam("dataDefinitionId")
+				Long dataDefinitionId,
+			DataDefinition dataDefinition)
+		throws Exception {
+
+		DataDefinition existingDataDefinition = getDataDefinition(
+			dataDefinitionId);
+
+		if (dataDefinition.getAvailableLanguageIds() != null) {
+			existingDataDefinition.setAvailableLanguageIds(
+				dataDefinition.getAvailableLanguageIds());
+		}
+
+		if (dataDefinition.getContentType() != null) {
+			existingDataDefinition.setContentType(
+				dataDefinition.getContentType());
+		}
+
+		if (dataDefinition.getDataDefinitionKey() != null) {
+			existingDataDefinition.setDataDefinitionKey(
+				dataDefinition.getDataDefinitionKey());
+		}
+
+		if (dataDefinition.getDateCreated() != null) {
+			existingDataDefinition.setDateCreated(
+				dataDefinition.getDateCreated());
+		}
+
+		if (dataDefinition.getDateModified() != null) {
+			existingDataDefinition.setDateModified(
+				dataDefinition.getDateModified());
+		}
+
+		if (dataDefinition.getDefaultDataLayout() != null) {
+			existingDataDefinition.setDefaultDataLayout(
+				dataDefinition.getDefaultDataLayout());
+		}
+
+		if (dataDefinition.getDefaultLanguageId() != null) {
+			existingDataDefinition.setDefaultLanguageId(
+				dataDefinition.getDefaultLanguageId());
+		}
+
+		if (dataDefinition.getDescription() != null) {
+			existingDataDefinition.setDescription(
+				dataDefinition.getDescription());
+		}
+
+		if (dataDefinition.getName() != null) {
+			existingDataDefinition.setName(dataDefinition.getName());
+		}
+
+		if (dataDefinition.getSiteId() != null) {
+			existingDataDefinition.setSiteId(dataDefinition.getSiteId());
+		}
+
+		if (dataDefinition.getStorageType() != null) {
+			existingDataDefinition.setStorageType(
+				dataDefinition.getStorageType());
+		}
+
+		if (dataDefinition.getUserId() != null) {
+			existingDataDefinition.setUserId(dataDefinition.getUserId());
+		}
+
+		preparePatch(dataDefinition, existingDataDefinition);
+
+		return putDataDefinition(dataDefinitionId, existingDataDefinition);
 	}
 
 	/**
@@ -657,6 +743,10 @@ public abstract class BaseDataDefinitionResourceImpl
 
 		return addAction(
 			actionName, siteId, methodName, null, permissionName, siteId);
+	}
+
+	protected void preparePatch(
+		DataDefinition dataDefinition, DataDefinition existingDataDefinition) {
 	}
 
 	protected <T, R> List<R> transform(

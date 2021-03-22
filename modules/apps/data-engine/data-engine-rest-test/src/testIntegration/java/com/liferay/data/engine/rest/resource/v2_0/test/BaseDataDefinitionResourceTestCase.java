@@ -632,6 +632,38 @@ public abstract class BaseDataDefinitionResourceTestCase {
 	}
 
 	@Test
+	public void testPatchDataDefinition() throws Exception {
+		DataDefinition postDataDefinition =
+			testPatchDataDefinition_addDataDefinition();
+
+		DataDefinition randomPatchDataDefinition = randomPatchDataDefinition();
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		DataDefinition patchDataDefinition =
+			dataDefinitionResource.patchDataDefinition(
+				postDataDefinition.getId(), randomPatchDataDefinition);
+
+		DataDefinition expectedPatchDataDefinition = postDataDefinition.clone();
+
+		_beanUtilsBean.copyProperties(
+			expectedPatchDataDefinition, randomPatchDataDefinition);
+
+		DataDefinition getDataDefinition =
+			dataDefinitionResource.getDataDefinition(
+				patchDataDefinition.getId());
+
+		assertEquals(expectedPatchDataDefinition, getDataDefinition);
+		assertValid(getDataDefinition);
+	}
+
+	protected DataDefinition testPatchDataDefinition_addDataDefinition()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPutDataDefinition() throws Exception {
 		DataDefinition postDataDefinition =
 			testPutDataDefinition_addDataDefinition();

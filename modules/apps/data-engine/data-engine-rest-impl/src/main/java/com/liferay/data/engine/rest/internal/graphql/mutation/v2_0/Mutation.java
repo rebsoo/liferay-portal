@@ -138,6 +138,20 @@ public class Mutation {
 	}
 
 	@GraphQLField
+	public DataDefinition patchDataDefinition(
+			@GraphQLName("dataDefinitionId") Long dataDefinitionId,
+			@GraphQLName("dataDefinition") DataDefinition dataDefinition)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_dataDefinitionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			dataDefinitionResource ->
+				dataDefinitionResource.patchDataDefinition(
+					dataDefinitionId, dataDefinition));
+	}
+
+	@GraphQLField
 	public DataDefinition updateDataDefinition(
 			@GraphQLName("dataDefinitionId") Long dataDefinitionId,
 			@GraphQLName("dataDefinition") DataDefinition dataDefinition)
