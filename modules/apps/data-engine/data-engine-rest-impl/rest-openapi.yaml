@@ -461,6 +461,35 @@ paths:
                     description:
                         ""
             tags: ["DataDefinition"]
+        patch:
+            operationId: patchDataDefinition
+            parameters:
+                - in: path
+                  name: dataDefinitionId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DataDefinition"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/DataDefinition"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DataDefinition"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/DataDefinition"
+                    description:
+                        ""
+            tags: [ "DataDefinition" ]
         put:
             operationId: putDataDefinition
             parameters:
