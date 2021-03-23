@@ -694,6 +694,14 @@ public class DataDefinitionResourceTest
 	}
 
 	@Override
+	protected DataDefinition testPatchDataDefinition_addDataDefinition()
+		throws Exception {
+
+		return dataDefinitionResource.postSiteDataDefinitionByContentType(
+			testGroup.getGroupId(), _CONTENT_TYPE, randomDataDefinition());
+	}
+
+	@Override
 	protected DataDefinition
 			testPostDataDefinitionByContentType_addDataDefinition(
 				DataDefinition dataDefinition)
