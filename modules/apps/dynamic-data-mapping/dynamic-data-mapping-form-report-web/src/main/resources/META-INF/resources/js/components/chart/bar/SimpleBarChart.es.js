@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 
 import {NAMED_COLORS} from '../../../utils/colors.es';
+import ellipsize from '../../../utils/ellipsize.es';
 import TooltipContent from '../TooltipContent.es';
 
 const {blueDark, gray, lightBlue, white} = NAMED_COLORS;
@@ -41,6 +42,10 @@ export default ({data, height, totalEntries, width}) => {
 	};
 
 	const CustomizedYAxisTick = ({payload, x, y}) => {
+		const minX = -162;
+		const SPACES_REGEX = /\s/g;
+		const maxTextSize = 24;
+
 		return (
 			<g transform={`translate(${x},${y})`}>
 				<text
@@ -49,9 +54,14 @@ export default ({data, height, totalEntries, width}) => {
 							? 'dim'
 							: ''
 					}`}
-					x={-22}
+					x={minX}
 				>
-					{`${payload.value}`}
+					{`${
+						payload.value.replace(SPACES_REGEX, '').length >
+						maxTextSize
+							? ellipsize(payload.value, maxTextSize)
+							: payload.value
+					}`}
 				</text>
 			</g>
 		);
