@@ -38,6 +38,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setVisible('confirmationErrorMessage', getValue('requireConfirmation'))",
 				"setVisible('confirmationLabel', getValue('requireConfirmation'))",
 				"setVisible('direction', getValue('requireConfirmation'))",
+				"setVisible('inputMaskFormat', getValue('inputMask'))",
 				"setVisible('tooltip', false)"
 			},
 			condition = "TRUE"
@@ -78,7 +79,8 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 								"type", "showLabel", "repeatable",
 								"requireConfirmation", "direction",
 								"confirmationLabel", "confirmationErrorMessage",
-								"validation", "tooltip"
+								"validation", "tooltip", "inputMask",
+								"inputMaskFormat"
 							}
 						)
 					}
@@ -117,6 +119,18 @@ public interface NumericDDMFormFieldTypeSettings
 		properties = "showEmptyOption=false", type = "select"
 	)
 	public String direction();
+
+	@DDMFormField(label = "%input-mask", properties = "showAsSwitcher=true")
+	public boolean inputMask();
+
+	@DDMFormField(
+		dataType = "string", label = "%format",
+		properties = "placeholder=%input-mask-format-placeholder",
+		required = true,
+		tip = "%to-create-a-custom-input-mask-you-will-need-to-use-a-specific-set-of-characters",
+		type = "text"
+	)
+	public LocalizedValue inputMaskFormat();
 
 	@DDMFormField(
 		dataType = "string", label = "%placeholder-text",
