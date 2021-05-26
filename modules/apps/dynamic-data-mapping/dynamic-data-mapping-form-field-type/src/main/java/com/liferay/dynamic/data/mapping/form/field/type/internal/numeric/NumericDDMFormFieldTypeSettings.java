@@ -165,7 +165,10 @@ public interface NumericDDMFormFieldTypeSettings
 	)
 	public boolean hideField();
 
-	@DDMFormField(label = "%input-mask", properties = "showAsSwitcher=true")
+	@DDMFormField(		
+		label = "%input-mask", properties = "showAsSwitcher=true",
+		visibilityExpression = "TRUE"
+	)
 	public boolean inputMask();
 
 	@DDMFormField(
