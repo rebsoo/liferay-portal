@@ -46,10 +46,11 @@ export const FormBuilder = () => {
 		dataDefinitionId,
 		groupId,
 		portletNamespace,
+		sidebarOpen: sidebarOpenState,
 	} = useConfig();
 
 	const [{sidebarOpen, sidebarPanelId}, setSidebarState] = useState({
-		sidebarOpen: false,
+		sidebarOpen: sidebarOpenState,
 		sidebarPanelId: 'fields',
 	});
 

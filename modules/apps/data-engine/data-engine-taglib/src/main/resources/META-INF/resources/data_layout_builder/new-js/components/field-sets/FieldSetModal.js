@@ -340,6 +340,7 @@ const FieldSetModal = ({fieldSet, onClose: onCloseProp}) => {
 					...config,
 					allowFieldSets: false,
 					dataDefinitionId: null,
+					sidebarOpen: true,
 				}}
 			>
 				<FormProvider
