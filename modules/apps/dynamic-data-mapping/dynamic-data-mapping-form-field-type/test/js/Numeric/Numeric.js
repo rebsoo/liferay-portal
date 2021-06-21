@@ -186,7 +186,6 @@ describe('Field Numeric', () => {
 			render(
 				<Numeric
 					confirmationValue="22.82"
-					dataType="integer"
 					name="numericField"
 					requireConfirmation={true}
 				/>
@@ -200,7 +199,7 @@ describe('Field Numeric', () => {
 		});
 	});
 
-	describe('Input Mask toggle', () => {
+	describe('Integer Input Mask toggle', () => {
 		it('has an inputMaskFormat', () => {
 			const {container} = render(
 				<Numeric
@@ -325,6 +324,77 @@ describe('Field Numeric', () => {
 			userEvent.type(input, '{backspace}');
 
 			expect(input.value).toBe('1');
+		});
+	});
+
+	describe('Decimal Input Mask toggle', () => {
+		it('renders a suffix', () => {
+			const {container} = render(
+				<Numeric
+					append="$"
+					appendType="suffix"
+					dataType="double"
+					inputMask={true}
+					name="numericField"
+					value="123"
+				/>
+			);
+
+			const input = container.querySelector('input');
+
+			expect(input.value).toBe('123$');
+		});
+
+		it('renders a prefix', () => {
+			const {container} = render(
+				<Numeric
+					append="$"
+					appendType="prefix"
+					dataType="double"
+					inputMask={true}
+					name="numericField"
+					value="123"
+				/>
+			);
+
+			const input = container.querySelector('input');
+
+			expect(input.value).toBe('$123');
+		});
+
+		it('renders the thousand separator', () => {
+			const {container} = render(
+				<Numeric
+					dataType="double"
+					inputMask={true}
+					name="numericField"
+					symbols={{decimalSymbol: '.', thousandSeparator: ','}}
+					value="1234"
+				/>
+			);
+
+			const input = container.querySelector('input');
+
+			expect(input.value).toBe('1,234');
+		});
+
+		it('allows user to input a decimal separator', () => {
+			const onChange = jest.fn();
+			const {container} = render(
+				<Numeric
+					dataType="double"
+					inputMask={true}
+					name="numericField"
+					onChange={onChange}
+					symbols={{decimalSymbol: ','}}
+				/>
+			);
+
+			const input = container.querySelector('input');
+
+			userEvent.type(input, '1,234');
+
+			expect(onChange.mock.calls[4][0].target.value).toBe('1,23');
 		});
 	});
 });
