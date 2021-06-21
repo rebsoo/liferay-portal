@@ -13,16 +13,27 @@
  */
 
 import {ClayInput} from '@clayui/form';
+
+// @ts-ignore
+
 import {useFormState} from 'data-engine-js-components-web';
-import React, {useMemo} from 'react';
+import React, {ChangeEventHandler, FocusEventHandler, useMemo} from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+
+// @ts-ignore
+
 import {conformToMask} from 'vanilla-text-mask';
 
+// @ts-ignore
+
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
+
+// @ts-ignore
+
 import withConfirmationField from '../util/withConfirmationField.es';
 
-const adaptiveMask = (rawValue, inputMaskFormat) => {
-	const generateMask = (mask) => {
+const adaptiveMask = (rawValue: string, inputMaskFormat: string) => {
+	const generateMask = (mask: string): string => {
 		if (!mask.includes('0')) {
 			return mask;
 		}
@@ -41,20 +52,37 @@ const adaptiveMask = (rawValue, inputMaskFormat) => {
 	);
 };
 
+interface NumberMaskConfig {
+	allowLeadingZeroes: boolean;
+	allowNegative: boolean;
+	includeThousandsSeparator: boolean;
+	prefix: string;
+	allowDecimal?: boolean;
+	decimalLimit?: number | null;
+	decimalSymbol?: string;
+}
+
+type NumericDataType = 'integer' | 'double';
 const getMaskedValue = ({
 	dataType,
 	decimalSymbol,
 	inputMask,
 	inputMaskFormat,
 	value,
-}) => {
+}: {
+	dataType: NumericDataType;
+	decimalSymbol: string;
+	inputMask?: boolean;
+	inputMaskFormat?: string;
+	value: string;
+}): MaskedNumber => {
 	let mask;
 
 	if (inputMask) {
-		mask = adaptiveMask(value, inputMaskFormat);
+		mask = adaptiveMask(value, inputMaskFormat as string);
 	}
 	else {
-		const config = {
+		const config: NumberMaskConfig = {
 			allowLeadingZeroes: true,
 			allowNegative: true,
 			includeThousandsSeparator: false,
@@ -77,7 +105,7 @@ const getMaskedValue = ({
 				value = value.replace(decimalSymbol, '');
 			}
 		}
-		value = String(value).replace('.', decimalSymbol);
+		value = value.replace('.', decimalSymbol);
 	}
 
 	const {conformedValue: masked} = conformToMask(value, mask, {
@@ -89,7 +117,29 @@ const getMaskedValue = ({
 	return {masked, raw: inputMask ? masked.replace(/\D/g, '') : masked};
 };
 
-const Numeric = ({
+interface MaskedNumber {
+	masked: string;
+	raw: string;
+}
+
+interface NumericProps {
+	dataType: NumericDataType;
+	defaultLanguageId: string;
+	id: string;
+	inputMask?: boolean;
+	inputMaskFormat?: string;
+	localizedValue?: {[key: string]: string};
+	name: string;
+	onBlur: FocusEventHandler<HTMLInputElement>;
+	onChange: (event: {target: {value: string}}) => void;
+	onFocus: FocusEventHandler<HTMLInputElement>;
+	placeholder?: string;
+	predefinedValue?: string;
+	readOnly: boolean;
+	symbols: {decimalSymbol: string; thousandSymbol?: string};
+	value?: string;
+}
+const Numeric: React.FC<NumericProps> = ({
 	dataType = 'integer',
 	defaultLanguageId,
 	id,
@@ -109,7 +159,7 @@ const Numeric = ({
 }) => {
 	const {editingLanguageId} = useFormState();
 
-	const inputValue = useMemo(() => {
+	const inputValue = useMemo<MaskedNumber>(() => {
 		const newValue =
 			localizedValue?.[editingLanguageId] ??
 			localizedValue?.[defaultLanguageId] ??
@@ -136,7 +186,9 @@ const Numeric = ({
 		value,
 	]);
 
-	const handleChange = ({target: {value}}) => {
+	const handleChange: ChangeEventHandler<HTMLInputElement> = ({
+		target: {value},
+	}) => {
 		const rawValue = value.replace(/\D/g, '');
 		if (
 			(inputValue.masked?.length ?? 0) - value.length === 1 &&
@@ -166,6 +218,9 @@ const Numeric = ({
 			readOnly={readOnly}
 		>
 			<ClayInput
+
+				// @ts-ignore
+
 				dir={Liferay.Language.direction[editingLanguageId]}
 				disabled={readOnly}
 				id={id}
@@ -176,7 +231,9 @@ const Numeric = ({
 				onFocus={onFocus}
 				placeholder={
 					placeholder ||
-					(inputMask ? inputMaskFormat?.replace(/\d/g, '_') : null)
+					(inputMask
+						? inputMaskFormat?.replace(/\d/g, '_')
+						: undefined)
 				}
 				type="text"
 				value={inputValue.masked}
