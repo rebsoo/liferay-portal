@@ -13,8 +13,14 @@
  */
 
 import React, {FocusEventHandler} from 'react';
+declare const Numeric: React.FC<NumericProps>;
+export {Numeric};
+declare const _default: any;
+export default _default;
 declare type NumericDataType = 'integer' | 'double';
 interface NumericProps {
+	append: string;
+	appendType?: 'prefix' | 'suffix';
 	dataType: NumericDataType;
 	defaultLanguageId: string;
 	id: string;
@@ -34,13 +40,10 @@ interface NumericProps {
 	placeholder?: string;
 	predefinedValue?: string;
 	readOnly: boolean;
-	symbols: {
-		decimalSymbol: string;
-		thousandSymbol?: string;
-	};
+	symbols: Symbols;
 	value?: string;
 }
-declare const Numeric: React.FC<NumericProps>;
-export {Numeric};
-declare const _default: any;
-export default _default;
+interface Symbols {
+	decimalSymbol: ',' | '.';
+	thousandSymbol?: ',' | '.' | ' ' | "'";
+}

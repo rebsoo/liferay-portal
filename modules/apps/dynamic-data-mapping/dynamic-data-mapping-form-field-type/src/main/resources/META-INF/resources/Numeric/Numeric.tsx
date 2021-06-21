@@ -52,34 +52,43 @@ const adaptiveMask = (rawValue: string, inputMaskFormat: string) => {
 	);
 };
 
-interface NumberMaskConfig {
-	allowLeadingZeroes: boolean;
-	allowNegative: boolean;
-	includeThousandsSeparator: boolean;
-	prefix: string;
-	allowDecimal?: boolean;
-	decimalLimit?: number | null;
-	decimalSymbol?: string;
-}
-
-type NumericDataType = 'integer' | 'double';
 const getMaskedValue = ({
+	append,
+	appendType,
 	dataType,
-	decimalSymbol,
 	inputMask,
 	inputMaskFormat,
+	symbols,
 	value,
 }: {
+	append: string;
+	appendType?: 'prefix' | 'suffix';
 	dataType: NumericDataType;
-	decimalSymbol: string;
 	inputMask?: boolean;
 	inputMaskFormat?: string;
+	symbols: Symbols;
 	value: string;
 }): MaskedNumber => {
 	let mask;
 
 	if (inputMask) {
-		mask = adaptiveMask(value, inputMaskFormat as string);
+		// if (dataType === 'double') {
+			const config: NumberMaskConfig = {
+				allowDecimal: true,
+				allowLeadingZeroes: true,
+				allowNegative: true,
+				decimalSymbol: symbols.decimalSymbol,
+				includeThousandsSeparator: Boolean(symbols.thousandSymbol),
+				prefix: appendType === 'prefix' ? append : '',
+				suffix: appendType === 'suffix' ? append : '',
+				thousandsSeparatorSymbol: symbols.thousandSymbol,
+			};
+
+			mask = createNumberMask(config);
+		// }
+		// else {
+		// 	mask = adaptiveMask(value, inputMaskFormat as string);
+		// }
 	}
 	else {
 		const config: NumberMaskConfig = {
@@ -92,7 +101,7 @@ const getMaskedValue = ({
 		if (dataType === 'double') {
 			config.allowDecimal = true;
 			config.decimalLimit = null;
-			config.decimalSymbol = decimalSymbol;
+			config.decimalSymbol = symbols.decimalSymbol;
 		}
 		mask = createNumberMask(config);
 
@@ -100,12 +109,12 @@ const getMaskedValue = ({
 			if (!value) {
 				return {masked: '', raw: ''};
 			}
-			value = value.replace(decimalSymbol, '.');
+			value = value.replace(symbols.decimalSymbol, '.');
 			if (dataType == 'integer' && value.includes('.')) {
-				value = value.replace(decimalSymbol, '');
+				value = value.replace(symbols.decimalSymbol, '');
 			}
 		}
-		value = value.replace('.', decimalSymbol);
+		value = value.replace('.', symbols.decimalSymbol);
 	}
 
 	const {conformedValue: masked} = conformToMask(value, mask, {
@@ -113,33 +122,15 @@ const getMaskedValue = ({
 		keepCharPositions: false,
 		placeholderChar: '\u2000',
 	});
-
-	return {masked, raw: inputMask ? masked.replace(/\D/g, '') : masked};
+	const regex = new RegExp(`[^${symbols.decimalSymbol}|\\d]`, 'g');
+	return {masked, raw: inputMask ? masked.replace(regex, '') : masked};
 };
 
-interface MaskedNumber {
-	masked: string;
-	raw: string;
-}
 
-interface NumericProps {
-	dataType: NumericDataType;
-	defaultLanguageId: string;
-	id: string;
-	inputMask?: boolean;
-	inputMaskFormat?: string;
-	localizedValue?: {[key: string]: string};
-	name: string;
-	onBlur: FocusEventHandler<HTMLInputElement>;
-	onChange: (event: {target: {value: string}}) => void;
-	onFocus: FocusEventHandler<HTMLInputElement>;
-	placeholder?: string;
-	predefinedValue?: string;
-	readOnly: boolean;
-	symbols: {decimalSymbol: string; thousandSymbol?: string};
-	value?: string;
-}
+
 const Numeric: React.FC<NumericProps> = ({
+	append,
+	appendType,
 	dataType = 'integer',
 	defaultLanguageId,
 	id,
@@ -153,7 +144,7 @@ const Numeric: React.FC<NumericProps> = ({
 	placeholder,
 	predefinedValue,
 	readOnly,
-	symbols: {decimalSymbol} = {decimalSymbol: '.'},
+	symbols = {decimalSymbol: '.'},
 	value,
 	...otherProps
 }) => {
@@ -168,15 +159,17 @@ const Numeric: React.FC<NumericProps> = ({
 			'';
 
 		return getMaskedValue({
+			append,
+			appendType,
 			dataType,
-			decimalSymbol,
 			inputMask,
 			inputMaskFormat,
+			symbols,
 			value: newValue,
 		});
 	}, [
 		dataType,
-		decimalSymbol,
+		symbols,
 		defaultLanguageId,
 		editingLanguageId,
 		inputMask,
@@ -198,8 +191,10 @@ const Numeric: React.FC<NumericProps> = ({
 		}
 
 		const newValue = getMaskedValue({
+			append,
+   			appendType,
 			dataType,
-			decimalSymbol,
+			symbols,
 			inputMask,
 			inputMaskFormat,
 			value,
@@ -247,3 +242,49 @@ const Numeric: React.FC<NumericProps> = ({
 
 export {Numeric};
 export default withConfirmationField(Numeric);
+
+interface NumberMaskConfig {
+	allowLeadingZeroes: boolean;
+	allowNegative: boolean;
+	includeThousandsSeparator: boolean;
+	prefix: string;
+	suffix?: string;
+	allowDecimal?: boolean;
+	decimalLimit?: number | null;
+	decimalSymbol?: string;
+	thousandsSeparatorSymbol?: string;
+	requireDecimal?: boolean;
+}
+
+type NumericDataType = 'integer' | 'double';
+
+
+interface MaskedNumber {
+	masked: string;
+	raw: string;
+}
+
+interface NumericProps {
+	append: string,
+	appendType?: 'prefix' | 'suffix';
+	dataType: NumericDataType;
+	defaultLanguageId: string;
+	id: string;
+	inputMask?: boolean;
+	inputMaskFormat?: string;
+	localizedValue?: {[key: string]: string};
+	name: string;
+	onBlur: FocusEventHandler<HTMLInputElement>;
+	onChange: (event: {target: {value: string}}) => void;
+	onFocus: FocusEventHandler<HTMLInputElement>;
+	placeholder?: string;
+	predefinedValue?: string;
+	readOnly: boolean;
+	symbols: Symbols;
+	value?: string;
+}
+
+interface Symbols {
+	decimalSymbol: ',' | '.';
+	thousandSymbol?: ',' | '.' | ' ' | "'";
+}
