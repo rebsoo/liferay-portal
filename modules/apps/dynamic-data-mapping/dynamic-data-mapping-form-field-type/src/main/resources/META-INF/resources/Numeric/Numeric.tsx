@@ -72,23 +72,23 @@ const getMaskedValue = ({
 	let mask;
 
 	if (inputMask) {
-		// if (dataType === 'double') {
+		if (dataType === 'double') {
 			const config: NumberMaskConfig = {
 				allowDecimal: true,
 				allowLeadingZeroes: true,
 				allowNegative: true,
 				decimalSymbol: symbols.decimalSymbol,
-				includeThousandsSeparator: Boolean(symbols.thousandSymbol),
+				includeThousandsSeparator: Boolean(symbols.thousandsSeparator),
 				prefix: appendType === 'prefix' ? append : '',
 				suffix: appendType === 'suffix' ? append : '',
-				thousandsSeparatorSymbol: symbols.thousandSymbol,
+				thousandsSeparatorSymbol: symbols.thousandsSeparator,
 			};
 
 			mask = createNumberMask(config);
-		// }
-		// else {
-		// 	mask = adaptiveMask(value, inputMaskFormat as string);
-		// }
+		}
+		else {
+			mask = adaptiveMask(value, inputMaskFormat as string);
+		}
 	}
 	else {
 		const config: NumberMaskConfig = {
@@ -133,6 +133,7 @@ const Numeric: React.FC<NumericProps> = ({
 	appendType,
 	dataType = 'integer',
 	defaultLanguageId,
+	decimalSymbol,
 	id,
 	inputMask,
 	inputMaskFormat,
@@ -144,11 +145,13 @@ const Numeric: React.FC<NumericProps> = ({
 	placeholder,
 	predefinedValue,
 	readOnly,
-	symbols = {decimalSymbol: '.'},
+	symbols: symbolsProp = {decimalSymbol: '.'},
+	thousandsSeparator,
 	value,
 	...otherProps
 }) => {
 	const {editingLanguageId} = useFormState();
+	const symbols = (inputMask && dataType === 'double') ? {decimalSymbol: decimalSymbol?.[0], thousandsSeparator: thousandsSeparator?.[0] == 'none' ?  null :  thousandsSeparator?.[0]} : symbolsProp;
 
 	const inputValue = useMemo<MaskedNumber>(() => {
 		const newValue =
@@ -252,7 +255,7 @@ interface NumberMaskConfig {
 	allowDecimal?: boolean;
 	decimalLimit?: number | null;
 	decimalSymbol?: string;
-	thousandsSeparatorSymbol?: string;
+	thousandsSeparatorSymbol?: string | null;
 	requireDecimal?: boolean;
 }
 
@@ -268,6 +271,7 @@ interface NumericProps {
 	append: string,
 	appendType?: 'prefix' | 'suffix';
 	dataType: NumericDataType;
+	decimalSymbol: [',' | '.'];
 	defaultLanguageId: string;
 	id: string;
 	inputMask?: boolean;
@@ -281,10 +285,11 @@ interface NumericProps {
 	predefinedValue?: string;
 	readOnly: boolean;
 	symbols: Symbols;
+	thousandsSeparator?: [',' | '.' | ' ' | "'" | 'none'];
 	value?: string;
 }
 
 interface Symbols {
 	decimalSymbol: ',' | '.';
-	thousandSymbol?: ',' | '.' | ' ' | "'";
+	thousandsSeparator?: ',' | '.' | ' ' | "'" | null;
 }
