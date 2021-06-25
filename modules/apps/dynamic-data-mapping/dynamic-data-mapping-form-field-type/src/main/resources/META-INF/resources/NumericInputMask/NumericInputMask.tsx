@@ -10,14 +10,20 @@ import Radio from '../Radio/Radio.es';
 type DecimalSeparator = ',' | '.';
 type ThousandsSeparator = DecimalSeparator | ' ' | "'" | 'none';
 
-interface IProps {
+
+interface INumericInputMaskValue {
     append?: string;
     appendType?: 'prefix' | 'suffix';
     decimalSeparator: DecimalSeparator[];
-    decimalSeparators: ISelectProps<DecimalSeparator>[];
-    readOnly: boolean;
     thousandsSeparator?: ThousandsSeparator[];
+
+}
+interface IProps {
+    decimalSeparators: ISelectProps<DecimalSeparator>[];
+    onChange: (event: { target: { value: string } }) => void;
+    readOnly: boolean;
     thousandsSeparators: ISelectProps<ThousandsSeparator>[];
+    value: INumericInputMaskValue;
     visible: boolean;
 }
 
@@ -28,60 +34,70 @@ interface ISelectProps<T> {
 }
 
 const NumericInputMask: React.FC<IProps> = ({
-    append,
-    appendType,
-    decimalSeparator,
     decimalSeparators,
+    onChange,
     readOnly,
-    thousandsSeparator,
     thousandsSeparators,
+    value: valueProp,
     visible,
 }) => {
+
+    const handleChange = (attributeName: keyof INumericInputMaskValue) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const inputValue = event.target.value;
+        const value = {
+            ...valueProp,
+            [attributeName]: typeof inputValue === 'string' ? inputValue : inputValue[0],
+        };
+
+        onChange({ target: { value: JSON.stringify(value) } });
+    }
+
+
     return (
         <>
             <Select
                 //@ts-ignore
                 label={Liferay.Language.get('thousands-separator')}
                 name="thousandsSeparator"
-                // onChange={()=>{}}
+                onChange={handleChange('thousandsSeparator')}
                 options={thousandsSeparators}
                 //@ts-ignore
                 placeholder={Liferay.Language.get('choose-an-option')}
                 readOnly={readOnly}
                 showEmptyOption={false}
-                value={thousandsSeparator}
+                value={valueProp.thousandsSeparator}
                 visible={visible}
             />
             <Select
                 //@ts-ignore
                 label={Liferay.Language.get('decimal-separator')}
                 name="decimalSeparator"
-                // onChange={()=>{}}
+                onChange={handleChange('decimalSeparator')}
                 options={decimalSeparators}
                 //@ts-ignore
                 placeholder={Liferay.Language.get('choose-an-option')}
                 readOnly={readOnly}
                 showEmptyOption={false}
-                value={decimalSeparator}
+                value={valueProp.decimalSeparator}
                 visible={visible}
             />
             <Text
                 //@ts-ignore
                 label={Liferay.Language.get('prefix-or-suffix')}
                 name="append"
-                // onChange={}
+                onChange={handleChange('append')}
                 //@ts-ignore
                 placeholder={Liferay.Language.get('input-mask-append-placeholder')}
                 readOnly={readOnly}
                 required={false}
-                value={append}
+                value={valueProp.append}
                 visible={visible}
             />
             <Radio
                 inline={false}
                 name="appendType"
-                // onChange={}
-                options= {[
+                onChange={handleChange('appendType')}
+                options={[
                     {
                         //@ts-ignore
                         label: Liferay.Language.get('suffix'),
@@ -94,8 +110,11 @@ const NumericInputMask: React.FC<IProps> = ({
                     },
                 ]}
                 readOnly={readOnly}
-                value={appendType}
+                value={valueProp.appendType}
             />
+
+            <input type="hidden" value={JSON.stringify(valueProp)} />
+
         </>
     );
 
