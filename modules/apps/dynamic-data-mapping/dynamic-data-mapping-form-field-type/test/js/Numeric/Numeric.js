@@ -368,7 +368,7 @@ describe('Field Numeric', () => {
 					dataType="double"
 					inputMask={true}
 					name="numericField"
-					symbols={{decimalSymbol: '.', thousandSeparator: ','}}
+					symbols={{decimalSymbol: '.', thousandsSeparator: ','}}
 					value="1234"
 				/>
 			);
